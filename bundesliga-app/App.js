@@ -1,9 +1,14 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+
+import {
+  View,
+  ActivityIndicator
+} from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase/firebaseConfig';
@@ -17,12 +22,21 @@ import Logout from './src/componentes/Logout';
 
 const Tab = createBottomTabNavigator();
 
+const iconos = {
+  Inicio: 'soccer-field',
+  Juego: 'trophy-outline',
+  Perfil: 'account-circle-outline',
+  Salir: 'logout',
+  Login: 'login',
+  Registro: 'account-plus-outline'
+};
+
 export default function App() {
   const [usuario, setUsuario] = useState(null);
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
       setUsuario(user);
       setCargando(false);
     });
@@ -45,11 +59,27 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator
-        screenOptions={{
+        screenOptions={({ route }) => ({
           headerShown: false,
           tabBarActiveTintColor: '#D71920',
-          tabBarInactiveTintColor: '#777'
-        }}
+          tabBarInactiveTintColor: '#777777',
+          tabBarStyle: {
+            height: 65,
+            paddingBottom: 8,
+            paddingTop: 5
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: '600'
+          },
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name={iconos[route.name] || 'soccer'}
+              size={size}
+              color={color}
+            />
+          )
+        })}
       >
         {usuario ? (
           <>
